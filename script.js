@@ -601,7 +601,7 @@ squishy.addEventListener(
 
 
         instruction.textContent =
-            "keep playing";
+            "";
 
     }
 );
