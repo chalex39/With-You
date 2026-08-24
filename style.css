@@ -1,608 +1,786 @@
 /* ==================================================
-  SECTION 1: YOUR CUSTOM MESSAGES
-  ================================================== */
-
-const messages = [
-
-"You are doing better than you think.",
-
-"I'm proud of you.",
-
-"You deserve a little break.",
-
-"Take a deep breath. You've got this.",
-
-"You are more capable than you realize.",
-
-"You are enough.",
-
-"Someone is always rooting for you.",
-
-"You make the world a little brighter.",
-
-"It's okay to take things one step at a time.",
-
-"I hope today is gentle with you."
-
-];
-
-
-/* ==================================================
-  SECTION 2: FIND WEBSITE ELEMENTS
-  ================================================== */
-
-const messageElement =
-document.getElementById("message");
-
-const squishy =
-document.getElementById("squishy");
-
-const instruction =
-document.getElementById("instruction");
-
-const heartButton =
-document.getElementById("heartButton");
-
-const messageOverlay =
-document.getElementById("messageOverlay");
-
-const closeButton =
-document.getElementById("closeButton");
-
-
-/* ==================================================
-  SECTION 3: RANDOM INITIAL MESSAGE
-  ================================================== */
-
-const randomIndex =
-Math.floor(
-Math.random() * messages.length
-);
-
-messageElement.textContent =
-messages[randomIndex];
-
-
-/* ==================================================
-  SECTION 4: PASTEL COLOR PALETTE
-  ==================================================
-
-  Color path:
-
-  PINK
-     ↓
-  PURPLE
-     ↓
-  BLUE
-     ↓
-  YELLOW
-     ↓
-  GREEN
-     ↓
-  PINK
-
-  The colors are intentionally pastel.
-  ================================================== */
-
-const pastelColors = [
-
-{
-name: "pink",
-
-background: "#fff1f5",
-
-glow: "#ffe3eb",
-
-light: "#fff8fa",
-
-main: "#f5c6d5",
-
-dark: "#e5a6b9"
-},
-
-
-{
-name: "purple",
-
-background: "#f5f0fb",
-
-glow: "#e9def7",
-
-light: "#fbf9ff",
-
-main: "#d7c6ec",
-
-dark: "#bda5d8"
-},
-
-
-{
-name: "blue",
-
-background: "#edf6fc",
-
-glow: "#dceefa",
-
-light: "#f8fcff",
-
-main: "#c4dced",
-
-dark: "#a3c7df"
-},
-
-
-{
-name: "yellow",
-
-background: "#fff9e9",
-
-glow: "#fff1c9",
-
-light: "#fffdf6",
-
-main: "#f3dfaa",
-
-dark: "#ddc57f"
-},
-
-
-{
-name: "green",
-
-background: "#eef9f1",
-
-glow: "#dcefe1",
-
-light: "#f9fff9",
-
-main: "#c5e2cb",
-
-dark: "#a5caaa"
+   SECTION 1: BASIC SETTINGS
+   ================================================== */
+
+* {
+    box-sizing: border-box;
 }
 
-];
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    min-height: 100%;
+
+    overflow: hidden;
+}
 
 
 /* ==================================================
-  SECTION 5: COLOR CONVERSION
-  ================================================== */
+   SECTION 2: COLOR VARIABLES
+   ================================================== */
 
-function hexToRgb(hex) {
+:root {
 
-const cleanHex =
-hex.replace("#", "");
+    --background-color: #fff1f5;
 
-return {
+    --background-glow: #ffe3eb;
 
-r:
-parseInt(
-cleanHex.substring(0, 2),
-16
-),
+    --squishy-light: #fff8fa;
 
-g:
-parseInt(
-cleanHex.substring(2, 4),
-16
-),
+    --squishy-main: #f5c6d5;
 
-b:
-parseInt(
-cleanHex.substring(4, 6),
-16
-)
+    --squishy-dark: #e5a6b9;
 
-};
+    --squishy-glow:
+        rgba(245, 198, 213, 0.30);
+
+    --text-color: #4a403d;
+
+    --secondary-text: #a99b96;
 
 }
 
 
 /* ==================================================
-  SECTION 6: RGB TO HEX
-  ================================================== */
+   SECTION 3: BODY / PHONE SCREEN
+   ================================================== */
 
-function rgbToHex(r, g, b) {
+body {
 
-return "#" +
+    width: 100%;
 
-[r, g, b]
-.map(
-value => {
+    min-height: 100vh;
+    min-height: 100dvh;
 
-return Math
-.round(value)
-.toString(16)
-.padStart(2, "0");
+    display: flex;
 
-}
-)
-.join("");
+    justify-content: center;
+    align-items: center;
 
-}
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            var(--background-glow) 0%,
+            var(--background-color) 48%,
+            #ffffff 100%
+        );
 
+    color: var(--text-color);
 
-/* ==================================================
-  SECTION 7: SMOOTH COLOR INTERPOLATION
-  ================================================== */
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
 
-function interpolateColor(
-color1,
-color2,
-amount
-) {
+    touch-action: none;
 
-const first =
-hexToRgb(color1);
+    user-select: none;
 
-const second =
-hexToRgb(color2);
+    -webkit-user-select: none;
 
-const r =
-first.r +
-(second.r - first.r)
-* amount;
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
 
-const g =
-first.g +
-(second.g - first.g)
-* amount;
+    /*
+       Faster than before, but still deliberately
+       smooth rather than instant.
+    */
 
-const b =
-first.b +
-(second.b - first.b)
-* amount;
-
-return rgbToHex(
-r,
-g,
-b
-);
+    transition:
+        background 0.9s ease;
 
 }
 
 
 /* ==================================================
-  SECTION 8: COLOR PROGRESS
-  ================================================== */
+   SECTION 4: MAIN PAGE
+   ================================================== */
 
-/*
-  The current color and target color are separated.
+.page {
 
-  This allows the color to smoothly follow the user's
-  movement without instantly jumping.
-*/
+    width: 100%;
 
-let colorProgress = 0;
+    max-width: 600px;
 
-let targetColorProgress = 0;
+    padding: 35px 25px;
 
+    text-align: center;
 
-/* ==================================================
-  SECTION 9: APPLY COLORS
-  ================================================== */
+    display: flex;
 
-function updateColors(progress) {
+    flex-direction: column;
 
-const paletteLength =
-pastelColors.length;
-
-
-const normalized =
-(
-(progress % paletteLength)
-+ paletteLength
-)
-% paletteLength;
-
-
-const firstIndex =
-Math.floor(normalized);
-
-
-const secondIndex =
-(firstIndex + 1)
-% paletteLength;
-
-
-const blend =
-normalized -
-firstIndex;
-
-
-const first =
-pastelColors[firstIndex];
-
-const second =
-pastelColors[secondIndex];
-
-
-const background =
-interpolateColor(
-first.background,
-second.background,
-blend
-);
-
-
-const glow =
-interpolateColor(
-first.glow,
-second.glow,
-blend
-);
-
-
-const light =
-interpolateColor(
-first.light,
-second.light,
-blend
-);
-
-
-const main =
-interpolateColor(
-first.main,
-second.main,
-blend
-);
-
-
-const dark =
-interpolateColor(
-first.dark,
-second.dark,
-blend
-);
-
-
-/*
-      Update CSS variables.
-   */
-
-document.documentElement.style
-.setProperty(
-"--background-color",
-background
-);
-
-
-document.documentElement.style
-.setProperty(
-"--background-glow",
-glow
-);
-
-
-document.documentElement.style
-.setProperty(
-"--squishy-light",
-light
-);
-
-
-document.documentElement.style
-.setProperty(
-"--squishy-main",
-main
-);
-
-
-document.documentElement.style
-.setProperty(
-"--squishy-dark",
-dark
-);
-
-
-/*
-      Squishy glow.
-   */
-
-const rgb =
-hexToRgb(main);
-
-
-document.documentElement.style
-.setProperty(
-"--squishy-glow",
-`rgba(
-               ${rgb.r},
-               ${rgb.g},
-               ${rgb.b},
-               0.28
-           )`
-);
+    align-items: center;
 
 }
 
 
 /* ==================================================
-  SECTION 10: COLOR ANIMATION
-  ==================================================
+   SECTION 5: SMALL INTRO TEXT
+   ================================================== */
 
-  IMPORTANT CHANGE:
+.subtitle {
 
-  This is significantly faster than the previous
-  version.
+    margin:
+        0
+        0
+        14px
+        0;
 
-  The color follows the person's interaction much
-  more quickly.
-  ================================================== */
+    font-size: 13px;
 
-function animateColors() {
+    letter-spacing: 0.12em;
 
-colorProgress +=
-(
-targetColorProgress -
-colorProgress
-) * 0.075;
+    text-transform: lowercase;
 
+    color: var(--secondary-text);
 
-updateColors(
-colorProgress
-);
-
-
-requestAnimationFrame(
-animateColors
-);
+    transition:
+        color 0.9s ease;
 
 }
 
 
-animateColors();
-
-
 /* ==================================================
-  SECTION 11: SQUISHY PHYSICS
-  ================================================== */
+   SECTION 6: ENCOURAGEMENT MESSAGE
+   ================================================== */
 
-let currentX = 0;
+#message {
 
-let currentY = 0;
+    margin: 0;
 
-let targetX = 0;
+    max-width: 500px;
 
-let targetY = 0;
+    font-size:
+        clamp(
+            25px,
+            7vw,
+            42px
+        );
 
-let currentScaleX = 1;
+    line-height: 1.15;
 
-let currentScaleY = 1;
+    font-weight: 600;
 
-let targetScaleX = 1;
+    letter-spacing: -0.035em;
 
-let targetScaleY = 1;
+    color: var(--text-color);
 
-let rotation = 0;
-
-let targetRotation = 0;
-
-let touching = false;
-
-let lastPointerX = null;
-
-let lastPointerY = null;
-
-
-/* ==================================================
-  SECTION 12: SQUISHY SPRING ANIMATION
-  ================================================== */
-
-function animateSquishy() {
-
-currentX +=
-(
-targetX -
-currentX
-) * 0.16;
-
-
-currentY +=
-(
-targetY -
-currentY
-) * 0.16;
-
-
-currentScaleX +=
-(
-targetScaleX -
-currentScaleX
-) * 0.13;
-
-
-currentScaleY +=
-(
-targetScaleY -
-currentScaleY
-) * 0.13;
-
-
-rotation +=
-(
-targetRotation -
-rotation
-) * 0.13;
-
-
-squishy.style.transform = `
-
-       translate3d(
-           ${currentX}px,
-           ${currentY}px,
-           0
-       )
-
-       scale(
-           ${currentScaleX},
-           ${currentScaleY}
-       )
-
-       rotate(
-           ${rotation}deg
-       )
-
-   `;
-
-
-requestAnimationFrame(
-animateSquishy
-);
+    transition:
+        color 0.9s ease,
+        opacity 0.18s ease;
 
 }
 
 
-animateSquishy();
+/* ==================================================
+   SECTION 7: SQUISHY AREA
+   ================================================== */
+
+.squishy-area {
+
+    width: 100%;
+
+    height: 360px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    position: relative;
+
+}
 
 
 /* ==================================================
-  SECTION 13: PRESS DOWN
-  ================================================== */
+   SECTION 8: THE SQUISHY
+   ================================================== */
 
-squishy.addEventListener(
-"pointerdown",
-function(event) {
+.squishy {
 
-touching = true;
+    width: 190px;
 
-squishy.classList.add(
-"is-touching"
-);
+    height: 190px;
 
+    position: relative;
 
-event.preventDefault();
+    overflow: visible;
 
+    border-radius:
+        46% 54% 51% 49%
+        /
+        49% 46% 54% 51%;
 
-squishy.setPointerCapture(
-event.pointerId
-);
+    background:
+        radial-gradient(
+            circle at 34% 25%,
+            var(--squishy-light) 0%,
+            var(--squishy-main) 38%,
+            var(--squishy-dark) 100%
+        );
 
+    box-shadow:
 
-lastPointerX =
-event.clientX;
+        0 24px 34px
+        rgba(100, 70, 70, 0.13),
 
-lastPointerY =
-event.clientY;
+        0 0 45px
+        var(--squishy-glow),
 
+        inset
+        13px 13px 22px
+        rgba(255, 255, 255, 0.65),
 
-/*
-          IMPORTANT:
+        inset
+        -14px -15px 22px
+        rgba(150, 90, 100, 0.12);
 
-          The color begins changing immediately
-          when the user presses down.
+    transform:
+        translate3d(0, 0, 0)
+        scale(1)
+        rotate(0deg);
 
-          This is much stronger than the previous
-          tiny 0.008 movement.
-       */
+    transform-origin: center center;
 
-targetColorProgress +=
-0.035;
+    touch-action: none;
 
+    cursor: grab;
 
-instruction.textContent =
-            "keep playing";
-            "";
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    will-change:
+        transform,
+        border-radius;
+
+    transition:
+        background 0.9s ease,
+        box-shadow 0.9s ease;
 
 }
-);
+
+
+/* ==================================================
+   SECTION 9: MAIN HIGHLIGHT
+   ================================================== */
+
+.squishy-highlight {
+
+    position: absolute;
+
+    width: 58px;
+
+    height: 30px;
+
+    top: 23px;
+
+    left: 31px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.52);
+
+    transform:
+        rotate(-25deg);
+
+    filter:
+        blur(2px);
+
+    pointer-events: none;
+
+}
+
+
+/* ==================================================
+   SECTION 10: SECONDARY HIGHLIGHT
+   ================================================== */
+
+.squishy-highlight-small {
+
+    position: absolute;
+
+    width: 24px;
+
+    height: 13px;
+
+    top: 55px;
+
+    left: 55px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.27);
+
+    filter:
+        blur(3px);
+
+    pointer-events: none;
+
+}
+
+
+/* ==================================================
+   SECTION 11: SOFT GLOW
+   ================================================== */
+
+.squishy-area::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 240px;
+
+    height: 240px;
+
+    border-radius: 50%;
+
+    background:
+        var(--squishy-glow);
+
+    filter:
+        blur(45px);
+
+    opacity: 0.7;
+
+    pointer-events: none;
+
+    z-index: -1;
+
+    transition:
+        background 0.9s ease,
+        transform 1s ease;
+
+}
+
+
+/* ==================================================
+   SECTION 12: INSTRUCTION
+   ================================================== */
+
+.instruction {
+
+    margin:
+        -8px
+        0
+        0
+        0;
+
+    font-size: 14px;
+
+    color: var(--secondary-text);
+
+    letter-spacing: 0.04em;
+
+    transition:
+        color 0.9s ease,
+        opacity 0.25s ease;
+
+}
+
+
+/* ==================================================
+   SECTION 13: PETITE HEART BUTTON
+   ================================================== */
+
+.heart-button {
+
+    /*
+       The clickable area remains comfortable,
+       while the actual heart itself is small.
+    */
+
+    position: relative;
+
+    width: 58px;
+
+    height: 58px;
+
+    margin-top: 10px;
+
+    padding: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    cursor: pointer;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    touch-action: manipulation;
+
+}
+
+
+/* ==================================================
+   SECTION 14: PETITE HEART
+   ================================================== */
+
+.heart-shape {
+
+    display: block;
+
+    font-size: 36px;
+
+    line-height: 1;
+
+    color: var(--squishy-dark);
+
+    border: none;
+
+    text-shadow:
+        0 5px 11px
+        rgba(120, 70, 80, 0.11);
+
+    transition:
+        color 0.9s ease,
+        transform 0.25s ease,
+        filter 0.25s ease;
+
+}
+
+
+/* ==================================================
+   SECTION 15: HEART HOVER
+   ================================================== */
+
+@media (hover: hover) {
+
+    .heart-button:hover
+    .heart-shape {
+
+        transform:
+            scale(1.08);
+
+        filter:
+            brightness(1.04);
+
+    }
+
+}
+
+
+/* ==================================================
+   SECTION 16: HEART PRESS
+   ================================================== */
+
+.heart-button:active
+.heart-shape {
+
+    transform:
+        scale(0.86);
+
+}
+
+
+/* ==================================================
+   SECTION 17: MESSAGE OVERLAY
+   ================================================== */
+
+.message-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 40px;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    background:
+        rgba(255, 250, 248, 0.18);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    transition:
+        opacity 0.45s ease,
+        visibility 0.45s ease;
+
+}
+
+
+/* ==================================================
+   SECTION 18: OPEN OVERLAY
+   ================================================== */
+
+.message-overlay.open {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+}
+
+
+/* ==================================================
+   SECTION 19: FLOATING MESSAGE
+   ================================================== */
+
+.floating-message {
+
+    max-width: 520px;
+
+    text-align: center;
+
+    background: transparent;
+
+    padding: 20px;
+
+    transform:
+        translateY(15px)
+        scale(0.96);
+
+    opacity: 0;
+
+    transition:
+        transform 0.55s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        ),
+
+        opacity 0.45s ease;
+
+}
+
+
+.message-overlay.open
+.floating-message {
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    opacity: 1;
+
+}
+
+
+/* ==================================================
+   SECTION 20: FLOATING MESSAGE TEXT
+   ================================================== */
+
+.floating-message p {
+
+    margin: 0;
+
+    font-size:
+        clamp(
+            28px,
+            8vw,
+            52px
+        );
+
+    line-height: 1.25;
+
+    font-weight: 500;
+
+    letter-spacing:
+        -0.025em;
+
+    color:
+        rgba(70, 58, 56, 0.92);
+
+    text-shadow:
+        0 2px 18px
+        rgba(255, 255, 255, 0.8);
+
+}
+
+
+/* ==================================================
+   SECTION 21: CLOSE BUTTON
+   ================================================== */
+
+.close-button {
+
+    position: absolute;
+
+    top:
+        calc(
+            env(safe-area-inset-top)
+            + 22px
+        );
+
+    right:
+        calc(
+            env(safe-area-inset-right)
+            + 22px
+        );
+
+    width: 48px;
+
+    height: 48px;
+
+    padding: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+
+    font-size: 35px;
+
+    font-weight: 200;
+
+    line-height: 1;
+
+    color:
+        rgba(70, 58, 56, 0.65);
+
+    cursor: pointer;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+
+}
+
+
+/* ==================================================
+   SECTION 22: CLOSE BUTTON INTERACTION
+   ================================================== */
+
+.close-button:hover {
+
+    transform:
+        rotate(8deg)
+        scale(1.08);
+
+    color:
+        rgba(70, 58, 56, 0.9);
+
+}
+
+.close-button:active {
+
+    transform:
+        scale(0.82);
+
+}
+
+
+/* ==================================================
+   SECTION 23: SMALL IPHONES
+   ================================================== */
+
+@media (max-height: 700px) {
+
+    .page {
+
+        padding-top: 20px;
+
+        padding-bottom: 20px;
+
+    }
+
+
+    .squishy-area {
+
+        height: 285px;
+
+    }
+
+
+    .squishy {
+
+        width: 165px;
+
+        height: 165px;
+
+    }
+
+
+    .squishy-area::before {
+
+        width: 210px;
+
+        height: 210px;
+
+    }
+
+
+    .heart-button {
+
+        margin-top: 7px;
+
+    }
+
+}
+
+
+/* ==================================================
+   SECTION 24: REDUCE MOTION ACCESSIBILITY
+   ================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    * {
+
+        transition-duration:
+            0.5s !important;
+
+    }
+
+}
