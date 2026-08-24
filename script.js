@@ -1,5 +1,8 @@
 /* ==================================================
-   SECTION 1: YOUR CUSTOM MESSAGES
+   SECTION 1: CUSTOM MESSAGES
+
+   Edit this list whenever you want to change
+   the messages displayed on the website.
    ================================================== */
 
 const messages = [
@@ -28,7 +31,7 @@ const messages = [
 
 
 /* ==================================================
-   SECTION 2: FIND WEBSITE ELEMENTS
+   SECTION 2: FIND PAGE ELEMENTS
    ================================================== */
 
 const messageElement =
@@ -51,112 +54,71 @@ const closeButton =
 
 
 /* ==================================================
-   SECTION 3: RANDOM INITIAL MESSAGE
+   SECTION 3: INITIAL RANDOM MESSAGE
    ================================================== */
 
-const randomIndex =
-    Math.floor(
-        Math.random() * messages.length
-    );
+function getRandomMessage() {
+
+    const index =
+        Math.floor(
+            Math.random() *
+            messages.length
+        );
+
+    return messages[index];
+
+}
+
 
 messageElement.textContent =
-    messages[randomIndex];
+    getRandomMessage();
 
 
 /* ==================================================
    SECTION 4: PASTEL COLOR PALETTE
-   ==================================================
 
-   Color path:
-
-   PINK
-      ↓
-   PURPLE
-      ↓
-   BLUE
-      ↓
-   YELLOW
-      ↓
-   GREEN
-      ↓
-   PINK
-
-   The colors are intentionally pastel.
+   PINK → PURPLE → BLUE → YELLOW → GREEN → PINK
    ================================================== */
 
 const pastelColors = [
 
     {
-        name: "pink",
-
         background: "#fff1f5",
-
         glow: "#ffe3eb",
-
         light: "#fff8fa",
-
         main: "#f5c6d5",
-
         dark: "#e5a6b9"
     },
 
-
     {
-        name: "purple",
-
         background: "#f5f0fb",
-
         glow: "#e9def7",
-
         light: "#fbf9ff",
-
         main: "#d7c6ec",
-
         dark: "#bda5d8"
     },
 
-
     {
-        name: "blue",
-
         background: "#edf6fc",
-
         glow: "#dceefa",
-
         light: "#f8fcff",
-
         main: "#c4dced",
-
         dark: "#a3c7df"
     },
 
-
     {
-        name: "yellow",
-
         background: "#fff9e9",
-
         glow: "#fff1c9",
-
         light: "#fffdf6",
-
         main: "#f3dfaa",
-
         dark: "#ddc57f"
     },
 
-
     {
-        name: "green",
-
         background: "#eef9f1",
-
         glow: "#dcefe1",
-
         light: "#f9fff9",
-
         main: "#c5e2cb",
-
         dark: "#a5caaa"
     }
 
@@ -169,26 +131,26 @@ const pastelColors = [
 
 function hexToRgb(hex) {
 
-    const cleanHex =
+    const clean =
         hex.replace("#", "");
 
     return {
 
         r:
             parseInt(
-                cleanHex.substring(0, 2),
+                clean.substring(0, 2),
                 16
             ),
 
         g:
             parseInt(
-                cleanHex.substring(2, 4),
+                clean.substring(2, 4),
                 16
             ),
 
         b:
             parseInt(
-                cleanHex.substring(4, 6),
+                clean.substring(4, 6),
                 16
             )
 
@@ -197,33 +159,22 @@ function hexToRgb(hex) {
 }
 
 
-/* ==================================================
-   SECTION 6: RGB TO HEX
-   ================================================== */
-
 function rgbToHex(r, g, b) {
 
     return "#" +
 
         [r, g, b]
             .map(
-                value => {
-
-                    return Math
+                value =>
+                    Math
                         .round(value)
                         .toString(16)
-                        .padStart(2, "0");
-
-                }
+                        .padStart(2, "0")
             )
             .join("");
 
 }
 
-
-/* ==================================================
-   SECTION 7: SMOOTH COLOR INTERPOLATION
-   ================================================== */
 
 function interpolateColor(
     color1,
@@ -239,18 +190,27 @@ function interpolateColor(
 
     const r =
         first.r +
-        (second.r - first.r)
-        * amount;
+        (
+            second.r -
+            first.r
+        ) *
+        amount;
 
     const g =
         first.g +
-        (second.g - first.g)
-        * amount;
+        (
+            second.g -
+            first.g
+        ) *
+        amount;
 
     const b =
         first.b +
-        (second.b - first.b)
-        * amount;
+        (
+            second.b -
+            first.b
+        ) *
+        amount;
 
     return rgbToHex(
         r,
@@ -262,52 +222,44 @@ function interpolateColor(
 
 
 /* ==================================================
-   SECTION 8: COLOR PROGRESS
+   SECTION 6: COLOR STATE
    ================================================== */
 
-/*
-   The current color and target color are separated.
+let colorProgress =
+    0;
 
-   This allows the color to smoothly follow the user's
-   movement without instantly jumping.
-*/
-
-let colorProgress = 0;
-
-let targetColorProgress = 0;
+let targetColorProgress =
+    0;
 
 
 /* ==================================================
-   SECTION 9: APPLY COLORS
+   SECTION 7: APPLY COLORS
    ================================================== */
 
 function updateColors(progress) {
 
-    const paletteLength =
+    const count =
         pastelColors.length;
-
 
     const normalized =
         (
-            (progress % paletteLength)
-            + paletteLength
-        )
-        % paletteLength;
-
+            progress % count +
+            count
+        ) % count;
 
     const firstIndex =
-        Math.floor(normalized);
-
+        Math.floor(
+            normalized
+        );
 
     const secondIndex =
-        (firstIndex + 1)
-        % paletteLength;
-
+        (
+            firstIndex + 1
+        ) % count;
 
     const blend =
         normalized -
         firstIndex;
-
 
     const first =
         pastelColors[firstIndex];
@@ -356,78 +308,65 @@ function updateColors(progress) {
         );
 
 
-    /*
-       Update CSS variables.
-    */
-
-    document.documentElement.style
-        .setProperty(
-            "--background-color",
-            background
-        );
+    const root =
+        document.documentElement;
 
 
-    document.documentElement.style
-        .setProperty(
-            "--background-glow",
-            glow
-        );
+    root.style.setProperty(
+        "--background-color",
+        background
+    );
 
 
-    document.documentElement.style
-        .setProperty(
-            "--squishy-light",
-            light
-        );
+    root.style.setProperty(
+        "--background-glow",
+        glow
+    );
 
 
-    document.documentElement.style
-        .setProperty(
-            "--squishy-main",
-            main
-        );
+    root.style.setProperty(
+        "--squishy-light",
+        light
+    );
 
 
-    document.documentElement.style
-        .setProperty(
-            "--squishy-dark",
-            dark
-        );
+    root.style.setProperty(
+        "--squishy-main",
+        main
+    );
 
 
-    /*
-       Squishy glow.
-    */
+    root.style.setProperty(
+        "--squishy-dark",
+        dark
+    );
+
 
     const rgb =
         hexToRgb(main);
 
 
-    document.documentElement.style
-        .setProperty(
-            "--squishy-glow",
-            `rgba(
-                ${rgb.r},
-                ${rgb.g},
-                ${rgb.b},
-                0.28
-            )`
-        );
+    root.style.setProperty(
+        "--squishy-glow",
+        `rgba(
+            ${rgb.r},
+            ${rgb.g},
+            ${rgb.b},
+            0.28
+        )`
+    );
 
 }
 
 
 /* ==================================================
-   SECTION 10: COLOR ANIMATION
-   ==================================================
+   SECTION 8: COLOR ANIMATION
 
-   IMPORTANT CHANGE:
+   The color follows the finger while the squishy
+   is being pressed/moved.
 
-   This is significantly faster than the previous
-   version.
-
-   The color follows the person's interaction much
-   more quickly.
+   Releasing the squishy does NOT cause another
+   color shift.
    ================================================== */
 
 function animateColors() {
@@ -436,7 +375,8 @@ function animateColors() {
         (
             targetColorProgress -
             colorProgress
-        ) * 0.075;
+        ) *
+        0.12;
 
 
     updateColors(
@@ -455,38 +395,32 @@ animateColors();
 
 
 /* ==================================================
-   SECTION 11: SQUISHY PHYSICS
+   SECTION 9: SQUISHY PHYSICS
    ================================================== */
 
 let currentX = 0;
-
 let currentY = 0;
 
 let targetX = 0;
-
 let targetY = 0;
 
 let currentScaleX = 1;
-
 let currentScaleY = 1;
 
 let targetScaleX = 1;
-
 let targetScaleY = 1;
 
 let rotation = 0;
-
 let targetRotation = 0;
 
 let touching = false;
 
 let lastPointerX = null;
-
 let lastPointerY = null;
 
 
 /* ==================================================
-   SECTION 12: SQUISHY SPRING ANIMATION
+   SECTION 10: SQUISHY ANIMATION
    ================================================== */
 
 function animateSquishy() {
@@ -557,18 +491,15 @@ animateSquishy();
 
 
 /* ==================================================
-   SECTION 13: PRESS DOWN
+   SECTION 11: PRESS DOWN
    ================================================== */
 
 squishy.addEventListener(
     "pointerdown",
     function(event) {
 
-        touching = true;
-
-        squishy.classList.add(
-            "is-touching"
-        );
+        touching =
+            true;
 
 
         event.preventDefault();
@@ -587,17 +518,12 @@ squishy.addEventListener(
 
 
         /*
-           IMPORTANT:
-
-           The color begins changing immediately
-           when the user presses down.
-
-           This is much stronger than the previous
-           tiny 0.008 movement.
+           A press itself immediately begins the
+           color movement.
         */
 
         targetColorProgress +=
-            0.035;
+            0.025;
 
 
         instruction.textContent =
@@ -608,7 +534,7 @@ squishy.addEventListener(
 
 
 /* ==================================================
-   SECTION 14: MOVEMENT
+   SECTION 12: MOVE SQUISHY
    ================================================== */
 
 squishy.addEventListener(
@@ -619,10 +545,6 @@ squishy.addEventListener(
             return;
         }
 
-
-        /*
-           Calculate actual finger movement.
-        */
 
         const movementX =
             event.clientX -
@@ -648,22 +570,15 @@ squishy.addEventListener(
             event.clientY;
 
 
-        /* ==========================================
-           COLOR CHANGE
-
-           This is the main adjustment.
-
-           Previously, the color changed very slowly.
-
-           Now every movement produces a visible
-           amount of color progression.
-
-           Even small movements count.
-           ========================================== */
+        /*
+           Color changes continuously while
+           the finger moves.
+        */
 
         const colorChange =
             0.012 +
-            movementDistance * 0.0025;
+            movementDistance *
+            0.0025;
 
 
         targetColorProgress +=
@@ -671,12 +586,14 @@ squishy.addEventListener(
 
 
         /*
-           Prevent the target from getting too far
-           ahead of the visible color.
+           Keep the color transition close enough
+           to the finger that it visibly responds
+           immediately.
         */
 
         const maximumLead =
-            colorProgress + 0.18;
+            colorProgress +
+            0.22;
 
 
         if (
@@ -690,9 +607,9 @@ squishy.addEventListener(
         }
 
 
-        /* ==========================================
-           SQUISHY POSITION
-           ========================================== */
+        /* ==================================================
+           SECTION 13: POSITION
+           ================================================== */
 
         const rect =
             squishy.getBoundingClientRect();
@@ -743,25 +660,27 @@ squishy.addEventListener(
 
 
         targetX =
-            distanceX * 0.28;
+            distanceX *
+            0.28;
 
 
         targetY =
-            distanceY * 0.28;
+            distanceY *
+            0.28;
 
 
-        /* ==========================================
-           STRETCH
-           ========================================== */
+        /* ==================================================
+           SECTION 14: SQUISH / STRETCH
+           ================================================== */
 
         const horizontalStretch =
-            Math.abs(distanceX)
-            / maximumDistance;
+            Math.abs(distanceX) /
+            maximumDistance;
 
 
         const verticalStretch =
-            Math.abs(distanceY)
-            / maximumDistance;
+            Math.abs(distanceY) /
+            maximumDistance;
 
 
         targetScaleX =
@@ -776,12 +695,9 @@ squishy.addEventListener(
             horizontalStretch * 0.08;
 
 
-        /* ==========================================
-           ROTATION
-           ========================================== */
-
         targetRotation =
-            distanceX * 0.08;
+            distanceX *
+            0.08;
 
     }
 );
@@ -789,38 +705,31 @@ squishy.addEventListener(
 
 /* ==================================================
    SECTION 15: RELEASE
-   ==================================================
 
    IMPORTANT:
-
-   There is NO COLOR CHANGE here.
-
-   Color only changes while the person is actually
-   pressing / interacting with the squishy.
+   No color change happens here.
    ================================================== */
 
 function releaseSquishy() {
 
-    touching = false;
-
-    squishy.classList.remove(
-        "is-touching"
-    );
+    touching =
+        false;
 
 
-    /*
-       Return the squishy to its natural shape.
-    */
+    targetX =
+        0;
 
-    targetX = 0;
+    targetY =
+        0;
 
-    targetY = 0;
+    targetScaleX =
+        1;
 
-    targetScaleX = 1;
+    targetScaleY =
+        1;
 
-    targetScaleY = 1;
-
-    targetRotation = 0;
+    targetRotation =
+        0;
 
 
     instruction.textContent =
@@ -856,18 +765,15 @@ squishy.addEventListener(
 
 
 /* ==================================================
-   SECTION 16: CLICK FOR A NEW MESSAGE
+   SECTION 16: CHANGE ENCOURAGEMENT MESSAGE
    ================================================== */
 
 squishy.addEventListener(
     "click",
     function() {
 
-        const newIndex =
-            Math.floor(
-                Math.random() *
-                messages.length
-            );
+        const newMessage =
+            getRandomMessage();
 
 
         messageElement.style.opacity =
@@ -878,7 +784,7 @@ squishy.addEventListener(
             function() {
 
                 messageElement.textContent =
-                    messages[newIndex];
+                    newMessage;
 
                 messageElement.style.opacity =
                     "1";
@@ -892,15 +798,7 @@ squishy.addEventListener(
 
 
 /* ==================================================
-   SECTION 17: MESSAGE TRANSITION
-   ================================================== */
-
-messageElement.style.transition =
-    "opacity 0.18s ease";
-
-
-/* ==================================================
-   SECTION 18: HEART BUTTON
+   SECTION 17: HEART BUTTON
    ================================================== */
 
 heartButton.addEventListener(
@@ -910,6 +808,7 @@ heartButton.addEventListener(
         messageOverlay.classList.add(
             "open"
         );
+
 
         messageOverlay.setAttribute(
             "aria-hidden",
@@ -921,7 +820,7 @@ heartButton.addEventListener(
 
 
 /* ==================================================
-   SECTION 19: CLOSE MESSAGE
+   SECTION 18: CLOSE MESSAGE
    ================================================== */
 
 function closeMessage() {
@@ -929,6 +828,7 @@ function closeMessage() {
     messageOverlay.classList.remove(
         "open"
     );
+
 
     messageOverlay.setAttribute(
         "aria-hidden",
@@ -945,7 +845,7 @@ closeButton.addEventListener(
 
 
 /* ==================================================
-   SECTION 20: TAP OUTSIDE TO CLOSE
+   SECTION 19: TAP OUTSIDE MESSAGE
    ================================================== */
 
 messageOverlay.addEventListener(
@@ -966,7 +866,7 @@ messageOverlay.addEventListener(
 
 
 /* ==================================================
-   SECTION 21: ESCAPE KEY
+   SECTION 20: ESCAPE KEY
    ================================================== */
 
 document.addEventListener(
@@ -974,7 +874,8 @@ document.addEventListener(
     function(event) {
 
         if (
-            event.key === "Escape"
+            event.key ===
+            "Escape"
         ) {
 
             closeMessage();
@@ -986,7 +887,7 @@ document.addEventListener(
 
 
 /* ==================================================
-   SECTION 22: INITIAL COLOR
+   SECTION 21: INITIAL COLORS
    ================================================== */
 
 updateColors(
