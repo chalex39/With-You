@@ -86,18 +86,48 @@ body {
 
 
 /* ==================================================
-   SECTION 3: BODY / PHONE SCREEN
+   FULL-SCREEN iPHONE BACKGROUND FIX
+   (fills BOTH the notch AND the home indicator)
    ================================================== */
+
+html {
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: var(--background-color);
+
+}
 
 body {
 
+    margin: 0;
+    padding: 0;
+
     width: 100%;
 
-    min-height: 100vh;
-    min-height: 100dvh;
+    /*
+       This is the important fix.
+
+       100dvh alone leaves a gap on many iPhones.
+       We extend the body by BOTH safe areas.
+    */
+
+    min-height:
+        calc(
+            100dvh
+            + env(safe-area-inset-top)
+            + env(safe-area-inset-bottom)
+        );
+
+    overflow: hidden;
 
     display: flex;
-
     justify-content: center;
     align-items: center;
 
@@ -109,67 +139,39 @@ body {
             #ffffff 100%
         );
 
-    color: var(--text-color);
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "SF Pro Text",
-        "Helvetica Neue",
-        Arial,
-        sans-serif;
-
-    touch-action: none;
-
-    user-select: none;
-
-    -webkit-user-select: none;
-
-.page {
-
-    width: 100%;
-
-    max-width: 600px;
-
-    padding-top:
-        calc(
-            35px +
-            env(safe-area-inset-top)
-        );
-
-    padding-right:
-        25px;
-
-    padding-bottom:
-        calc(
-            35px +
-            env(safe-area-inset-bottom)
-        );
-
-    padding-left:
-        25px;
-
-    text-align: center;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-}
-
-    /*
-       Faster than before, but still deliberately
-       smooth rather than instant.
-    */
-
     transition:
         background 0.9s ease;
 
 }
 
+
+/* ==================================================
+   PAGE CONTENT
+   (only the CONTENT stays inside the safe area)
+   ================================================== */
+
+.page {
+
+    width: 100%;
+    max-width: 600px;
+
+    padding-top:
+        calc(35px + env(safe-area-inset-top));
+
+    padding-right: 25px;
+
+    padding-bottom:
+        calc(35px + env(safe-area-inset-bottom));
+
+    padding-left: 25px;
+
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
 
 /* ==================================================
    SECTION 4: MAIN PAGE
